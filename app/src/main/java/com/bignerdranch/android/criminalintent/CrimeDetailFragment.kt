@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.provider.Settings.System.DATE_FORMAT
-
 import android.text.format.DateFormat
 import android.util.Log
 import android.view.LayoutInflater
@@ -28,6 +27,7 @@ import androidx.navigation.fragment.navArgs
 import com.bignerdranch.android.criminalintent.databinding.FragmentCrimeDetailBinding
 import kotlinx.coroutines.launch
 import java.io.File
+import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.UUID
 
@@ -180,6 +180,7 @@ class CrimeDetailFragment: Fragment() {
         } else {
             getString(R.string.crime_report_unsolved)
         }
+
         val dateString = DateFormat.format(DATE_FORMAT, crime.date).toString()
         val suspectText = if (crime.suspect.isBlank()) {
             getString(R.string.crime_report_no_suspect)
