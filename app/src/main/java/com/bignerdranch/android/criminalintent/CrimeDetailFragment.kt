@@ -10,8 +10,12 @@ import android.provider.Settings.System.DATE_FORMAT
 import android.text.format.DateFormat
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.core.view.doOnLayout
@@ -33,6 +37,12 @@ import java.util.UUID
 
 class CrimeDetailFragment: Fragment() {
     private var _binding: FragmentCrimeDetailBinding? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
     private val binding
         get() = checkNotNull(_binding) {
             "Cannot access binding because it is null. Is the view visible?"
@@ -124,8 +134,7 @@ class CrimeDetailFragment: Fragment() {
         setFragmentResultListener(
             DatePickerFragment.REQUEST_KEY_DATE
         ) { _, bundle ->
-            val newDate =
-                bundle.getSerializable(DatePickerFragment.BUNDLE_KEY_DATE) as Date
+            val newDate = bundle.getSerializable(DatePickerFragment.BUNDLE_KEY_DATE) as Date
             crimeDetailViewModel.updateCrime { it.copy(date = newDate) }
         }
     }
@@ -238,6 +247,34 @@ class CrimeDetailFragment: Fragment() {
                 binding.crimePhoto.tag = null
                 binding.crimePhoto.contentDescription = getString(R.string.crime_photo_no_image_description)
             }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.fragment_crime_detail, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.delete_crime -> {
+                //Since the view model has the current crime, call the delete function
+                crimeDetailViewModel.deleteCrime()
+
+                //Displays a toast to let the user know the crime has been successfully deleted
+                Toast.makeText(
+                    activity,
+                    R.string.delete_message,
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                //When crime is deleted, send the user back to the crime lists (a.k.a. the main activity)
+                val intent = Intent(activity, MainActivity::class.java)
+                startActivity(intent)
+
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 }

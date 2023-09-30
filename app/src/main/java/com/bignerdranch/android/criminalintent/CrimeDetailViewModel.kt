@@ -32,6 +32,13 @@ class CrimeDetailViewModel(crimeId: UUID): ViewModel() {
         super.onCleared()
         crime.value?.let { crimeRepository.updateCrime(it) }
     }
+
+    /*Since the detail view model is holding the current crime the user is looking at,
+    * if the user opted to delete the crime, then a simple call to the function will delete the
+    * current crime stored in the view model*/
+    fun deleteCrime(){
+        crime.value?.let { crimeRepository.deleteCrime(it) }
+    }
 }
 
 class CrimeDetailViewModelFactory(
